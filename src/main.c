@@ -1,12 +1,12 @@
-#include "../headers/socket.h"
 #include "../headers/http.h"
+#include "../headers/socket.h"
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <string.h>
 #define BUFFER_SIZE 1024
 int main() {
 
@@ -50,20 +50,20 @@ int main() {
     // handle client request
     for (int i = server_fd + 1; i < max_fd; i++) {
       if (FD_ISSET(i, &sockets)) {
-        char buffer[BUFFER_SIZE];
-        retval = recv(i, &buffer, BUFFER_SIZE, 0);
-        if (retval <= 0) {
-          perror("recv\n");
+        http_request_t *req = parse_http(i);
+        if (req == NULL) {
+          printf("INVALID HTTP REQUEST!\n");
           close(i);
           FD_CLR(i, &sockets);
-          printf("closed connection and cleared fd %d\n", i);
-        }
-        printf("read %d bytes from client with fd: %d. message: %s\n", retval,
-               i, buffer);
+        } else {
+          char *request = request_to_string(req);
+          printf("got the following request: \n%s\n\n",request);
 
-          send(i, http_404_content, strlen(http_404_content), 0);
-        close(i);
-        FD_CLR(i, &sockets);
+          free(req);
+          send(i, http_404_not_found, strlen(http_404_not_found), 0);
+          close(i);
+          FD_CLR(i, &sockets);
+        }
       }
     }
   }
