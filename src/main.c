@@ -50,6 +50,7 @@ int main() {
     // handle client request
     for (int i = server_fd + 1; i < max_fd; i++) {
       if (FD_ISSET(i, &sockets)) {
+        printf("socket %d is ready for read",i);
         http_request_t *req = parse_http(i);
         if (req == NULL) {
           printf("INVALID HTTP REQUEST!\n");
@@ -58,9 +59,10 @@ int main() {
         } else {
           char *request = request_to_string(req);
           printf("got the following request: \n%s\n\n",request);
-
+          printf("will respond with %s \n",http_404_not_found);
           free(req);
           send(i, http_404_not_found, strlen(http_404_not_found), 0);
+          printf("sent response!\n");
           close(i);
           FD_CLR(i, &sockets);
         }
