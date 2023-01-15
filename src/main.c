@@ -8,10 +8,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #define BUFFER_SIZE 1024
+
 int main() {
 
-  struct sockaddr_in client_addr;
-  socklen_t client_addr_len = sizeof(client_addr);
 
   int server_fd = listen_TCP("127.0.0.1", 8090);
 
@@ -28,29 +27,13 @@ int main() {
     }
     // handle new connection
     if (FD_ISSET(server_fd, &ready_sockets)) {
-      retval =
-          accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_len);
-      if (retval == -1) {
-        perror("accept()");
-        continue;
-      } else {
-        if (retval > max_fd) {
-          max_fd = retval;
-        }
-        FD_SET(retval, &sockets);
-        char client_addr_str[200];
-
-        sockaddr_to_string(&client_addr, client_addr_str,
-                           sizeof(client_addr_str));
-        printf("Accepted new connection. Client address: %s. Cleint fd: %d \n",
-               client_addr_str, retval);
-      }
+      handle_new_connection(server_fd, &max_fd, &sockets);
     }
 
     // handle client request
     for (int i = server_fd + 1; i < max_fd; i++) {
       if (FD_ISSET(i, &sockets)) {
-        printf("socket %d is ready for read",i);
+        printf("socket %d is ready for read", i);
         http_request_t *req = parse_http(i);
         if (req == NULL) {
           printf("INVALID HTTP REQUEST!\n");
@@ -58,8 +41,8 @@ int main() {
           FD_CLR(i, &sockets);
         } else {
           char *request = request_to_string(req);
-          printf("got the following request: \n%s\n\n",request);
-          printf("will respond with %s \n",http_404_not_found);
+          printf("got the following request: \n%s\n\n", request);
+          printf("will respond with %s \n", http_404_not_found);
           free(req);
           send(i, http_404_not_found, strlen(http_404_not_found), 0);
           printf("sent response!\n");

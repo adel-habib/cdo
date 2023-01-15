@@ -8,6 +8,5 @@ typedef struct {
   void (*handler)(http_request_t *req);
 } endpoint;
 
-void handle_todo_get(http_request_t* req);
 
 #endif

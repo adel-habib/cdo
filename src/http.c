@@ -63,8 +63,6 @@ http_request_t *parse_http(int client_fd) {
 
 char *request_to_string(http_request_t *req) {
   char *request_str = NULL;
-  int headers_len = strlen(req->headers);
-  int payload_len = strlen(req->payload);
   int size = snprintf(NULL, 0, "%s %s %s\r\n%s\r\n%s", req->method, req->uri,
                       req->version, req->headers, req->payload);
   request_str = (char *)malloc(size + 1);
