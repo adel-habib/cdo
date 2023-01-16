@@ -58,6 +58,7 @@ http_request_t *parse_http(int client_fd) {
     char *body_ptr = buffer + nbytes - content_length;
     strncpy(req->payload, body_ptr, sizeof(req->payload));
   }
+  req->client_fd = client_fd;
   return req;
 }
 
