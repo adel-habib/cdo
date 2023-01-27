@@ -1,18 +1,30 @@
 #include "../headers/http.h"
 #include "../headers/socket.h"
-#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#define BUFFER_SIZE 1024
+#include <errno.h>
 
-int main() {
+int main(int argc, char *argv[]) {
 
+    uint16_t port = 8080;
+    char* interface = "127.0.0.1";
 
-  int server_fd = listen_TCP("127.0.0.1", 8090);
+    char *endptr;
+    if (argc > 1) {
+        errno = 0;
+        long int temp_port = strtol(argv[1], &endptr, 10);
+        if (errno != 0 || *endptr != '\0' || temp_port < 0 || temp_port > UINT16_MAX) {
+            printf("Error: Invalid port number provided\n");
+            return 1;
+        }
+        port = (uint16_t) temp_port;
+    }
+
+  int server_fd = listen_TCP(interface, port);
 
   fd_set sockets, ready_sockets;
   FD_ZERO(&sockets);

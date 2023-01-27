@@ -1,18 +1,17 @@
-CC=gcc
-CFLAGS=-I.
-DEPS = headers/http.h headers/rest.h headers/socket.h
-OBJ = src/http.o src/socket.o src/main.o
+CC = gcc
+CFLAGS = -I./headers
 
-%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+SRCS = src/socket.c src/http.c src/main.c
+OBJS = build/socket.o build/http.o build/main.o
 
-main: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+all: build_dir $(OBJS)
+	$(CC) $(OBJS) -o build/main
 
-run: main
-	./main
+build_dir:
+	mkdir -p build
 
-.PHONY: clean
+build/%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f src/*.o main
+	rm -rf build
