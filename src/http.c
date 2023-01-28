@@ -88,3 +88,9 @@ const char *http_404_not_found = "HTTP/1.1 404 Not Found\r\n"
 const char *http_close_connection = "HTTP/1.1 200 OK\r\n"
                                     "Connection: Close\r\n"
                                     "\r\n";
+const char *http_welcome = "HTTP/1.1 200 OK\r\n"
+                 "Content-Type: text/html\r\n"
+                 "Connection: Close\r\n"
+                 "Content-Length: 25\r\n"
+                 "\r\n"
+                 "<html><body>Welcome to CDO</body></html>";

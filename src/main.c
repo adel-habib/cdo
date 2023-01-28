@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
 
     uint16_t port = 8080;
     char* interface = "127.0.0.1";
+    int iteration = 0;
 
     char *endptr;
     if (argc > 1) {
@@ -45,19 +46,20 @@ int main(int argc, char *argv[]) {
     // handle client request
     for (int i = server_fd + 1; i < max_fd; i++) {
       if (FD_ISSET(i, &sockets)) {
-        printf("socket %d is ready for read", i);
+        printf("socket %d is ready for read\n", i);
         http_request_t *req = parse_http(i);
         if (req == NULL) {
           printf("INVALID HTTP REQUEST!\n");
           close(i);
           FD_CLR(i, &sockets);
         } else {
+            iteration++;
           char *request = request_to_string(req);
-          printf("got the following request: \n%s\n\n", request);
-          printf("will respond with %s \n", http_404_not_found);
+          // printf("got the following request: \n%s\n\n", request);
+          // printf("will respond with %s \n", http_404_not_found);
           free(req);
-          send(i, http_404_not_found, strlen(http_404_not_found), 0);
-          printf("sent response!\n");
+          send(i, http_welcome, strlen(http_welcome), 0);
+          printf("sent response!, iteration number: %d\n",iteration);
           close(i);
           FD_CLR(i, &sockets);
         }

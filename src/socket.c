@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+
 int listen_TCP(const char *address, uint16_t port) {
   struct sockaddr_in server_address = create_sockaddr(address, port);
   int server_file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
@@ -35,7 +36,7 @@ int listen_TCP(const char *address, uint16_t port) {
     perror(errMsg);
     exit(EXIT_FAILURE);
   }
-
+    printf("Server started and is listening on http://%s:%d\n",address,port);
   return server_file_descriptor;
 }
 struct sockaddr_in create_sockaddr(const char *address, uint16_t port) {

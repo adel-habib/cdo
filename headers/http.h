@@ -24,5 +24,5 @@ bool is_valid_http_method(char *method);
 
 extern const char *http_404_not_found;
 extern const char *http_close_connection;
-
+extern const char *http_welcome;
 #endif
